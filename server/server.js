@@ -46,8 +46,9 @@ app.post('/create-payment-intent', async (req, res) => {
     const amount = calculateOrderAmount(data.items)
 
     await stripe.paymentIntents.create({
-      amount: amount,
-      currency: data.currency,
+      payment_method_types: ['alipay'],
+      amount: 10,
+      currency: 'cad',
       application_fee_amount: calculateApplicationFeeAmount(amount),
       transfer_data: {
         destination: data.account,

@@ -11,7 +11,7 @@ var paymentIntentClientSecret = null;
 
 // Set up Stripe.js and Elements to use in checkout form
 var setupElements = function(data) {
-  stripe = Stripe(data.publishableKey);
+  stripe = Stripe(data.publishableKey, {betas: ['alipay_pm_beta_1'], apiVersion: '2020-03-02;alipay_beta=v1'});
   var elements = stripe.elements();
   var style = {
     base: {
@@ -49,19 +49,30 @@ var pay = function(stripe, card, clientSecret) {
 
   // Initiate the payment.
   // If authentication is required, confirmCardPayment will automatically display a modal
-  stripe
-    .confirmCardPayment(clientSecret, {
-      payment_method: {
-        card: card
-      }
-    })
-    .then(function(result) {
+  // stripe
+  //   .confirmCardPayment(clientSecret, {
+  //     payment_method: {
+  //       card: card
+  //     }
+  //   })
+  //   .then(function(result) {
+  //     if (result.error) {
+  //       // Show error to your customer
+  //       showError(result.error.message);
+  //     } else {
+  //       // The payment has been processed!
+  //       orderComplete(clientSecret);
+  //     }
+  //   });
+
+    stripe.confirmAlipayPayment(clientSecret, {
+      return_url: `${window.location.href}`,
+    }).then((result) => {
       if (result.error) {
-        // Show error to your customer
+        // Inform the customer that there was an error.
+        // var errorElement = document.getElementById('error-message');
+        // errorElement.textContent = result.error.message;
         showError(result.error.message);
-      } else {
-        // The payment has been processed!
-        orderComplete(clientSecret);
       }
     });
 };
